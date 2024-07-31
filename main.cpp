@@ -17,7 +17,7 @@ int main( int argc, char* argv[] ) {
 
 
     const char *filename = argv[1];
-    // const char *filename = "a.png";
+    // const char *filename = "b.png";
     FILE *file;
     unsigned char *buffer;
     size_t file_size;
@@ -37,6 +37,7 @@ int main( int argc, char* argv[] ) {
 
     // ファイルサイズが26バイト以下なら終了
     if (file_size < 26) {
+        fclose( file );
         return 0;
     }
 
@@ -67,10 +68,7 @@ int main( int argc, char* argv[] ) {
     // }
 
     // 最初の12byteでPNGかどうかチェック
-    unsigned char check[13];
-    // その後のIHDRを取得
-    unsigned char res[14];
-
+    unsigned char check[12];
     memcpy( check , buffer, 12);
     // 89 50 4E 47 0D 0A 1A 0A 00 00 00 0Dに対応する配列
     unsigned char top_signature[] = {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D};
@@ -81,18 +79,19 @@ int main( int argc, char* argv[] ) {
         return 0;
     }
 
+    // IHDRを取得
+    unsigned char res[13];
     memcpy( res , buffer + 12 , 13); 
     for (int i = 0; i < 13; i++ ) {
         printf("%02X ", res[i]);
     }
     // printf("\n");
 
-
     // リソースを解放
     free( buffer );
     fclose( file );
 
-    return EXIT_SUCCESS;
+    return 0;
 }
 
 
